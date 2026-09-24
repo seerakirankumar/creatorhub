@@ -1,0 +1,6 @@
+{
+  "name": "CreatorHub",
+  "description": "Modern Enterprise Creator Gig Marketplace for discovering, booking, and monetizing creative talent.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,72 @@
+// CreatorHub Prisma Schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Creator {
+  id          String    @id @default(uuid())
+  name        String
+  avatar      String
+  bio         String?
+  title       String?
+  rating      Float     @default(5.0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  gigs        Gig[]
+  bookings    Booking[]
+
+  @@map("creators")
+}
+
+model Gig {
+  id           String    @id @default(uuid())
+  creatorId    String
+  title        String
+  category     String
+  description  String
+  rate         Float
+  availability Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  creator      Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  bookings     Booking[]
+
+  @@index([category])
+  @@index([creatorId])
+  @@index([availability])
+  @@map("gigs")
+}
+
+model Booking {
+  id                 String        @id @default(uuid())
+  gigId              String
+  creatorId          String
+  clientName         String
+  clientEmail        String?
+  projectDescription String
+  requestedDate      DateTime
+  status             BookingStatus @default(PENDING)
+  rejectionReason    String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  gig                Gig           @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  creator            Creator       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([gigId])
+  @@index([creatorId])
+  @@index([status])
+  @@map("bookings")
+}
